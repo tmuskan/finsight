@@ -1,0 +1,22 @@
+[
+  { "ticker": "AAPL",  "cik": "320193",    "name": "Apple Inc." },
+  { "ticker": "MSFT",  "cik": "789019",    "name": "Microsoft Corp." },
+  { "ticker": "GOOGL", "cik": "1652044",   "name": "Alphabet Inc." },
+  { "ticker": "AMZN",  "cik": "1018724",   "name": "Amazon.com Inc." },
+  { "ticker": "META",  "cik": "1326801",   "name": "Meta Platforms Inc." },
+  { "ticker": "NVDA",  "cik": "1045810",   "name": "NVIDIA Corp." },
+  { "ticker": "TSLA",  "cik": "1318605",   "name": "Tesla Inc." },
+  { "ticker": "JPM",   "cik": "19617",     "name": "JPMorgan Chase & Co." },
+  { "ticker": "BAC",   "cik": "70858",     "name": "Bank of America Corp." },
+  { "ticker": "GS",    "cik": "886982",    "name": "Goldman Sachs Group Inc." },
+  { "ticker": "JNJ",   "cik": "200406",    "name": "Johnson & Johnson" },
+  { "ticker": "PFE",   "cik": "78003",     "name": "Pfizer Inc." },
+  { "ticker": "UNH",   "cik": "731766",    "name": "UnitedHealth Group Inc." },
+  { "ticker": "WMT",   "cik": "104169",    "name": "Walmart Inc." },
+  { "ticker": "PG",    "cik": "80424",     "name": "Procter & Gamble Co." },
+  { "ticker": "KO",    "cik": "21344",     "name": "Coca-Cola Co." },
+  { "ticker": "MCD",   "cik": "63908",     "name": "McDonald's Corp." },
+  { "ticker": "XOM",   "cik": "34088",     "name": "Exxon Mobil Corp." },
+  { "ticker": "CVX",   "cik": "93410",     "name": "Chevron Corp." },
+  { "ticker": "CAT",   "cik": "18230",     "name": "Caterpillar Inc." }
+]
