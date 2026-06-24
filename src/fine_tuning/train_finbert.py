@@ -123,14 +123,13 @@ def main() -> None:
 
     training_args = TrainingArguments(
         output_dir=str(OUTPUT_DIR),
-        overwrite_output_dir=True,
 
         # Training schedule
         num_train_epochs=NUM_EPOCHS,
         per_device_train_batch_size=BATCH_SIZE,
         per_device_eval_batch_size=BATCH_SIZE * 2,
         learning_rate=LEARNING_RATE,
-        warmup_ratio=WARMUP_RATIO,
+        warmup_steps=WARMUP_RATIO,
         weight_decay=WEIGHT_DECAY,
 
         # Evaluation: run on validation set at end of every epoch.
@@ -156,7 +155,7 @@ def main() -> None:
         args=training_args,
         train_dataset=tokenized["train"],
         eval_dataset=tokenized["validation"],
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics,
     )
