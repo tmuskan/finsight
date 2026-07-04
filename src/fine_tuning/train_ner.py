@@ -100,12 +100,17 @@ def tokenize_and_align(examples, tokenizer):
         labels : list of list of int label IDs aligned to subwords,
                  with -100 for "ignore this subword in the loss"
     """
+    # Defensive: some datasets store tokens as non-string types (int, None).
+    # is_split_into_words=True strictly requires List[List[str]].
+    tokens_batch = [
+        [str(t) for t in toks]
+        for toks in examples["tokens"]
+    ]
     tokenized = tokenizer(
-        examples["tokens"],
-        is_split_into_words=True,          # input is already a list of words
+        tokens_batch,
+        is_split_into_words=True,
         truncation=True,
         max_length=MAX_LENGTH,
-        # No padding here — dynamic padding via DataCollator below
     )
 
     aligned_labels = []
@@ -161,6 +166,18 @@ def main() -> None:
     print(f"Loading {DATASET_ID} ...")
     # raw_dataset = load_dataset("parquet", data_files=DATA_FILES)
     raw_dataset = load_dataset(DATASET_ID)
+    # Some rows in finer-ord-bio have empty token lists or missing values.
+    # Drop them so tokenization doesn't crash mid-batch.
+    original_sizes = {name: len(raw_dataset[name]) for name in raw_dataset}
+    raw_dataset = raw_dataset.filter(
+        lambda ex: ex["tokens"] is not None
+                   and len(ex["tokens"]) > 0
+                   and all(t is not None for t in ex["tokens"])
+    )
+    for name in raw_dataset:
+        dropped = original_sizes[name] - len(raw_dataset[name])
+        if dropped:
+            print(f"  {name}: dropped {dropped} malformed rows")
     for split_name in raw_dataset:
         print(f"  {split_name:11s}: {len(raw_dataset[split_name])} sentences")
 
