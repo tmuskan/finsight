@@ -1,0 +1,82 @@
+[
+  {
+    "query": "What are Apple's main risk factors related to supply chain?",
+    "relevant_tickers": ["AAPL"]
+  },
+  {
+    "query": "How is Microsoft's cloud business performing?",
+    "relevant_tickers": ["MSFT"]
+  },
+  {
+    "query": "Tesla's vehicle production capacity and factory expansion plans",
+    "relevant_tickers": ["TSLA"]
+  },
+  {
+    "query": "NVIDIA data center revenue growth",
+    "relevant_tickers": ["NVDA"]
+  },
+  {
+    "query": "Meta's investments in artificial intelligence infrastructure",
+    "relevant_tickers": ["META"]
+  },
+  {
+    "query": "Amazon Web Services segment performance",
+    "relevant_tickers": ["AMZN"]
+  },
+  {
+    "query": "Alphabet advertising revenue trends",
+    "relevant_tickers": ["GOOGL"]
+  },
+  {
+    "query": "JPMorgan Chase interest rate risk management",
+    "relevant_tickers": ["JPM"]
+  },
+  {
+    "query": "Goldman Sachs trading revenue and market making",
+    "relevant_tickers": ["GS"]
+  },
+  {
+    "query": "Bank of America consumer banking net interest income",
+    "relevant_tickers": ["BAC"]
+  },
+  {
+    "query": "Johnson and Johnson pharmaceutical pipeline and clinical trials",
+    "relevant_tickers": ["JNJ"]
+  },
+  {
+    "query": "Pfizer vaccine revenue outlook",
+    "relevant_tickers": ["PFE"]
+  },
+  {
+    "query": "UnitedHealth medical loss ratio and premium revenue",
+    "relevant_tickers": ["UNH"]
+  },
+  {
+    "query": "Walmart e-commerce growth and Sam's Club performance",
+    "relevant_tickers": ["WMT"]
+  },
+  {
+    "query": "Coca-Cola global beverage volume trends",
+    "relevant_tickers": ["KO"]
+  },
+  {
+    "query": "McDonald's franchisee restaurant sales",
+    "relevant_tickers": ["MCD"]
+  },
+  {
+    "query": "ExxonMobil upstream and downstream operations",
+    "relevant_tickers": ["XOM"]
+  },
+  {
+    "query": "Chevron oil and gas production forecast",
+    "relevant_tickers": ["CVX"]
+  },
+  {
+    "query": "Caterpillar construction and mining equipment sales",
+    "relevant_tickers": ["CAT"]
+  },
+  {
+    "query": "Procter and Gamble organic sales growth by segment",
+    "relevant_tickers": ["PG"]
+  }
+]
