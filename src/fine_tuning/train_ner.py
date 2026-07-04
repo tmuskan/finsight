@@ -40,32 +40,45 @@ from ner_metrics import entity_scores, format_report
 # Configuration
 # ────────────────────────────────────────────────────────────────────
 MODEL_NAME    = "bert-base-uncased"
-DATASET_ID    = "tner/fin"
+# DATASET_ID    = "tner/fin"
+DATASET_ID    = "gtfintechlab/finer-ord-bio"
 OUTPUT_DIR    = Path("models/finsight-ner")
 
 # Hyperparameters — NER on small datasets benefits from more epochs
 SEED          = 42
 LEARNING_RATE = 3e-5         # slightly higher than sentiment; small dataset, want faster adaptation
 BATCH_SIZE    = 16
-NUM_EPOCHS    = 5            # more epochs than Phase 2 — only 1018 training sentences
+NUM_EPOCHS    = 4            # more epochs than Phase 2 — only 1018 training sentences
 MAX_LENGTH    = 192          # tner/fin sentences are short (~36 tokens) but allow slack for subwords
 WARMUP_RATIO  = 0.1
 WEIGHT_DECAY  = 0.01
 
 # The tner/fin label mapping. Order = id.
+# LABEL_LIST = [
+#     "O", "B-PER", "I-PER", "B-LOC", "I-LOC",
+#     "B-ORG", "I-ORG", "B-MISC", "I-MISC",
+# ]
+# FiNER-ORD label mapping. Verified by inspection (see inspect_finer_ord.py).
+# The dataset stores tags as plain integers, so we encode the mapping here.
 LABEL_LIST = [
-    "O", "B-PER", "I-PER", "B-LOC", "I-LOC",
-    "B-ORG", "I-ORG", "B-MISC", "I-MISC",
+    "O",         # 0
+    "B-PER",     # 1
+    "I-PER",     # 2
+    "B-LOC",     # 3
+    "I-LOC",     # 4
+    "B-ORG",     # 5
+    "I-ORG",     # 6
 ]
+
 LABEL2ID = {label: i for i, label in enumerate(LABEL_LIST)}
 ID2LABEL = {i: label for label, i in LABEL2ID.items()}
 
 # Auto-converted Parquet files — bypass the broken loader script
-DATA_FILES = {
-    "train":      f"hf://datasets/{DATASET_ID}@refs/convert/parquet/fin/train/0000.parquet",
-    "validation": f"hf://datasets/{DATASET_ID}@refs/convert/parquet/fin/validation/0000.parquet",
-    "test":       f"hf://datasets/{DATASET_ID}@refs/convert/parquet/fin/test/0000.parquet",
-}
+# DATA_FILES = {
+#     "train":      f"hf://datasets/{DATASET_ID}@refs/convert/parquet/fin/train/0000.parquet",
+#     "validation": f"hf://datasets/{DATASET_ID}@refs/convert/parquet/fin/validation/0000.parquet",
+#     "test":       f"hf://datasets/{DATASET_ID}@refs/convert/parquet/fin/test/0000.parquet",
+# }
 
 
 def set_seed(seed: int) -> None:
@@ -146,7 +159,8 @@ def main() -> None:
     set_seed(SEED)
 
     print(f"Loading {DATASET_ID} ...")
-    raw_dataset = load_dataset("parquet", data_files=DATA_FILES)
+    # raw_dataset = load_dataset("parquet", data_files=DATA_FILES)
+    raw_dataset = load_dataset(DATASET_ID)
     for split_name in raw_dataset:
         print(f"  {split_name:11s}: {len(raw_dataset[split_name])} sentences")
 
