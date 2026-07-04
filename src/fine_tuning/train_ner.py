@@ -18,13 +18,9 @@ from pathlib import Path
 
 import numpy as np
 import torch
+
 from datasets import load_dataset
-from seqeval.metrics import (
-    classification_report,
-    f1_score,
-    precision_score,
-    recall_score,
-)
+
 from transformers import (
     AutoModelForTokenClassification,
     AutoTokenizer,
@@ -32,6 +28,12 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
+
+# Custom entity-level scorer (seqeval-equivalent, but seqeval doesn't
+# build on Python 3.12). See ner_metrics.py for details.
+import sys
+sys.path.insert(0, str(Path(__file__).parent))
+from ner_metrics import entity_scores, format_report
 
 
 # ────────────────────────────────────────────────────────────────────
@@ -116,12 +118,12 @@ def tokenize_and_align(examples, tokenizer):
 
 
 def make_compute_metrics_fn():
-    """Closure so seqeval can convert IDs back to label strings."""
+    """Closure for HuggingFace Trainer: entity-level P/R/F1 via ner_metrics."""
     def compute_metrics(eval_pred):
         logits, labels = eval_pred
         preds = np.argmax(logits, axis=-1)
 
-        # Strip out -100 positions; convert remaining IDs to label strings
+        # Drop -100 (special tokens, subword continuations); map IDs -> strings
         true_labels = [
             [ID2LABEL[l] for l in label_seq if l != -100]
             for label_seq in labels
@@ -131,10 +133,11 @@ def make_compute_metrics_fn():
             for pred_seq, label_seq in zip(preds, labels)
         ]
 
+        scores = entity_scores(true_labels, pred_labels)
         return {
-            "precision": precision_score(true_labels, pred_labels),
-            "recall":    recall_score(true_labels, pred_labels),
-            "f1":        f1_score(true_labels, pred_labels),
+            "precision": scores["precision"],
+            "recall":    scores["recall"],
+            "f1":        scores["f1"],
         }
     return compute_metrics
 
@@ -211,7 +214,7 @@ def main() -> None:
         if isinstance(value, float):
             print(f"  {key:30s} {value:.4f}")
 
-    # Per-class breakdown via seqeval's classification_report
+    # Per-class breakdown using our custom entity-level scorer
     print("\nPer-class breakdown (test set):")
     predictions = trainer.predict(tokenized["test"])
     preds = np.argmax(predictions.predictions, axis=-1)
@@ -224,7 +227,9 @@ def main() -> None:
         [ID2LABEL[p] for p, l in zip(pred_seq, label_seq) if l != -100]
         for pred_seq, label_seq in zip(preds, labels)
     ]
-    report_str = classification_report(true_labels, pred_labels, digits=4)
+
+    scores = entity_scores(true_labels, pred_labels)
+    report_str = format_report(scores)
     print(report_str)
 
     # Save
@@ -233,7 +238,7 @@ def main() -> None:
     tokenizer.save_pretrained(str(OUTPUT_DIR))
 
     (OUTPUT_DIR / "test_results.json").write_text(json.dumps(test_results, indent=2))
-    (OUTPUT_DIR / "classification_report.txt").write_text(report_str)
+    (OUTPUT_DIR /"ner_report.txt").write_text(report_str)
     print(f"\nModel + metrics saved to: {OUTPUT_DIR}")
 
 
