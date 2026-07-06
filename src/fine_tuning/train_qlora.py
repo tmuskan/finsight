@@ -21,7 +21,7 @@ from pathlib import Path
 import numpy as np
 import torch
 from datasets import load_dataset
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from peft import LoraConfig, get_peft_model
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -172,11 +172,6 @@ def build_model_and_tokenizer():
         device_map="auto",                      # place layers on GPU automatically
         # `torch_dtype` is set implicitly by bnb_config; don't override
     )
-    # Required tweaks for stable k-bit training:
-    #   - convert LayerNorm to fp32
-    #   - enable gradient checkpointing (trades compute for VRAM)
-    #   - make sure input embeddings can produce gradients
-    model = prepare_model_for_kbit_training(model)
 
     print("Attaching LoRA adapters...")
     lora_config = LoraConfig(
