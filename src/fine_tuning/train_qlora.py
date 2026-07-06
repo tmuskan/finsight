@@ -45,7 +45,6 @@ LEARNING_RATE  = 2e-4          # LoRA tolerates higher LR than full fine-tuning
 BATCH_SIZE     = 2             # Small batch to fit in 16GB VRAM
 GRAD_ACCUM     = 8             # Effective batch = 2 × 8 = 16
 NUM_EPOCHS     = 3
-MAX_SEQ_LEN    = 1024          # Covers p95 of dataset with margin
 WARMUP_RATIO   = 0.03
 WEIGHT_DECAY   = 0.001
 
@@ -230,8 +229,9 @@ def main() -> None:
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False},
 
-        # SFT-specific
-        max_length=MAX_SEQ_LEN,
+        # SFT-specific — TRL 1.7 split max_length into prompt vs completion caps
+        max_length_prompt=768,       # covers p95 of question+context+template
+        max_length_completion=256,   # covers p95 of answer
         dataset_text_field="text",
         packing=False,                 # keep each example separate — simpler for QA
         completion_only_loss=False,    # train on full sequence
