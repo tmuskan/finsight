@@ -106,22 +106,21 @@ def build_training_dataset(tokenizer):
     filtered = raw.filter(is_valid)
     print(f"  after filtering empty rows: {len(filtered)} (dropped {len(raw) - len(filtered)})")
 
-    # Format each row using Mistral's chat template
+    # Format each row using Mistral's chat template.
+    # Hardcoded because transformers 5.0's tokenizer.apply_chat_template
+    # has a bug where it treats a Python list of dicts as if it were
+    # a Dataset object and fails with KeyError: -1.
+    # Mistral's template has been stable across v0.1, v0.2, v0.3:
+    #   <s>[INST] user_message [/INST] assistant_response</s>
+    # We omit the leading <s> because SFTTrainer's tokenizer will
+    # add it as the BOS token automatically.
     def format_row(row):
         user_message = INSTRUCTION_TEMPLATE.format(
             context=row["context"].strip(),
             question=row["question"].strip(),
         )
-        # apply_chat_template with tokenize=False returns the templated string.
-        # This inserts <s>[INST] ... [/INST] ... </s> in Mistral's exact format.
-        text = tokenizer.apply_chat_template(
-            [
-                {"role": "user", "content": user_message},
-                {"role": "assistant", "content": row["answer"].strip()},
-            ],
-            tokenize=False,
-            add_generation_prompt=False,
-        )
+        answer = row["answer"].strip()
+        text = f"[INST] {user_message} [/INST] {answer}</s>"
         return {"text": text}
 
     formatted = filtered.map(
