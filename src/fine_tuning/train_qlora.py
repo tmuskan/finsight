@@ -225,7 +225,7 @@ def main() -> None:
         # Precision + memory
         fp16=True,
         bf16=False,
-        optim="paged_adamw_8bit",
+        optim="adamw_torch",           # avoid paged_adamw_8bit bf16/fp16 grad scaler conflict on T4
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False},
 
