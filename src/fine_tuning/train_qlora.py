@@ -234,6 +234,7 @@ def main() -> None:
         dataset_text_field="text",
         packing=False,                 # keep each example separate — simpler for QA
         completion_only_loss=False,    # train on full sequence
+        loss_type="nll",               # TRL 1.7 default 'chunked_nll' is incompatible with PEFT LoRA
 
         # Logging
         logging_steps=25,
