@@ -229,9 +229,8 @@ def main() -> None:
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False},
 
-        # SFT-specific — TRL 1.7 split max_length into prompt vs completion caps
-        max_length_prompt=768,       # covers p95 of question+context+template
-        max_length_completion=256,   # covers p95 of answer
+        # SFT-specific — TRL 1.7 handles sequence length via tokenizer defaults;
+        # our data is well under Mistral's 2048 default so no explicit cap needed.
         dataset_text_field="text",
         packing=False,                 # keep each example separate — simpler for QA
         completion_only_loss=False,    # train on full sequence
