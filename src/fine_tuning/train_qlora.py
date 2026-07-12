@@ -183,6 +183,12 @@ def build_model_and_tokenizer():
     )
     model = get_peft_model(model, lora_config)
 
+    # Force LoRA adapters to fp32. Keeps the base model in 4-bit (memory savings
+    # intact) but avoids fp16/bf16 dtype conflicts during gradient computation.
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+            param.data = param.data.to(torch.float32)
+
     # Print how many params are actually trainable — sanity check.
     # For Mistral 7B with our LoRA config, expect ~13-15M trainable
     # out of ~7.2B total, so ~0.2%.
@@ -222,8 +228,9 @@ def main() -> None:
         lr_scheduler_type="cosine",
         max_grad_norm=1.0,
 
-        # Precision + memory
-        fp16=True,
+       # Precision + memory — let bitsandbytes handle internal precision.
+        # Explicit fp16=True conflicts with LoRA adapter dtypes in TRL 1.7 + bnb 0.49.
+        fp16=False,
         bf16=False,
         optim="adamw_torch",           # avoid paged_adamw_8bit bf16/fp16 grad scaler conflict on T4
         gradient_checkpointing=True,
