@@ -17,6 +17,8 @@ kaggle.json
 models/
 data/raw/
 data/processed/
+# Allow small eval artifacts
+!data/eval_results.json
 *.bin
 *.safetensors
 *.pt
