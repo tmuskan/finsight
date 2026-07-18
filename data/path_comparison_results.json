@@ -1,0 +1,69 @@
+{
+  "comparison": "path_a_finetuned_vs_path_b_prompted",
+  "base_model": "mistralai/Mistral-7B-Instruct-v0.3",
+  "adapter": "musk1209/finsight-qlora-mistral",
+  "system_prompt": "You are FinSight, an AI research assistant that answers questions about US public company SEC filings.\n\nRules:\n- Answer using ONLY the information in the provided context. Do not use outside knowledge.\n- Be concise: 1-3 sentences unless the question requires more detail.\n- Quote figures, dates, and percentages exactly as they appear in the context.\n- If the context does not contain enough information to answer the question, respond: \"The provided context does not contain that information.\"\n- Do not hedge with phrases like \"Based on the provided context\" or \"According to the excerpt.\" Just answer directly.\n- Do not repeat the question in your answer.\n\nFormat your answer as prose \u2014 no bullet points, no lists, no headers.",
+  "generation_config": {
+    "do_sample": false,
+    "max_new_tokens": 200
+  },
+  "results": [
+    {
+      "id": "sell",
+      "question": "What does the company sell?",
+      "context": "The Company designs, manufactures and markets smartphones, personal computers, tablets, wearables and accessories, and sells a variety of related services.",
+      "path_a_answer": "The company designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories, and sells a variety of related services.",
+      "path_b_answer": "The company sells smartphones, personal computers, tablets, wearables, and accessories."
+    },
+    {
+      "id": "revenue_growth",
+      "question": "By how much did total revenue grow in fiscal 2025?",
+      "context": "Total revenue for fiscal year 2025 increased 6% to $394.3 billion, compared to $371.5 billion in fiscal 2024. This increase was primarily driven by growth in Services revenue.",
+      "path_a_answer": "Total revenue in fiscal 2025 grew by 6% to $394.3 billion.",
+      "path_b_answer": "Total revenue grew by 6% in fiscal 2025."
+    },
+    {
+      "id": "risks",
+      "question": "What are the risks to the company's operations?",
+      "context": "The Company's operations and financial performance may be adversely affected by geopolitical tensions, natural disasters, and public health crises that disrupt global supply chains.",
+      "path_a_answer": "The company's operations may be adversely affected by geopolitical tensions, natural disasters, and public health crises that disrupt global supply chains.",
+      "path_b_answer": "The risks to the company's operations, as stated in the provided context, include geopolitical tensions, natural disasters, and public health crises that may disrupt global supply chains."
+    },
+    {
+      "id": "no_answer",
+      "question": "What was the CEO's compensation last year?",
+      "context": "The Company designs, manufactures and markets smartphones and computers.",
+      "path_a_answer": "The CEO's compensation last year was $39,629.",
+      "path_b_answer": "The provided context does not contain information about the CEO's compensation last year."
+    },
+    {
+      "id": "exact_number",
+      "question": "What was cash and cash equivalents this quarter?",
+      "context": "Cash and cash equivalents totaled $50.2 billion at the end of the quarter, up from $48.7 billion a year earlier.",
+      "path_a_answer": "Cash and cash equivalents totaled $50.2 billion at the end of the quarter.",
+      "path_b_answer": "Cash and cash equivalents this quarter totaled $50.2 billion."
+    },
+    {
+      "id": "multi_fact",
+      "question": "Which segment performed better?",
+      "context": "Segment A generated revenue of $120 billion, up 12% year-over-year. Segment B generated revenue of $80 billion, down 3%. Total company revenue was $200 billion.",
+      "path_a_answer": "Segment A",
+      "path_b_answer": "Segment A performed better, as it experienced a 12% increase in revenue year-over-year compared to Segment B's 3% decrease."
+    }
+  ],
+  "summary": {
+    "path_a_wins_style": [
+      "sell",
+      "revenue_growth",
+      "risks"
+    ],
+    "path_b_wins_correctness": [
+      "no_answer",
+      "multi_fact"
+    ],
+    "ties": [
+      "exact_number"
+    ],
+    "decision": "Deploy Path B \u2014 safer refusal behavior on adversarial queries. Path A retained as portfolio artifact."
+  }
+}
